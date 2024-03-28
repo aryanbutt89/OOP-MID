@@ -1,0 +1,129 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Reservation {
+private:
+    string name;
+    string timeSlot;
+    int age;
+    string contactNumber;
+
+public:
+    Reservation(string n, string ts, int a, string cn) : name(n), timeSlot(ts), age(a), contactNumber(cn) {}
+
+    string getName() const {
+        return name;
+    }
+
+    string getTimeSlot() const {
+        return timeSlot;
+    }
+
+    int getAge() const {
+        return age;
+    }
+
+    string getContactNumber() const {
+        return contactNumber;
+    }
+
+    void displayDetails() const {
+        cout << "Details:" << endl;
+        cout << "Name: " << name << endl;
+        cout << "Age: " << age << endl;
+        cout << "Contact Number: " << contactNumber << endl;
+    }
+};
+
+class Restaurant {
+private:
+    vector<string> availableTimeSlots;
+
+public:
+    Restaurant() {
+        for (int i = 10; i <= 12; i++) {
+            availableTimeSlots.push_back(to_string(i) + ":00");
+        }
+        for (int i = 1; i <= 12; i++) {
+            availableTimeSlots.push_back(to_string(i) + ":00");
+        }
+    }
+
+    void displayAvailableTimeSlots() const {
+        cout << "Available Time Slots:" << endl;
+        for (const auto& slot : availableTimeSlots) {
+            cout << slot << endl;
+        }
+    }
+
+    bool isValidTimeSlot(const string& timeSlot) const {
+        return find(availableTimeSlots.begin(), availableTimeSlots.end(), timeSlot) != availableTimeSlots.end();
+    }
+
+    void reserveTimeSlot(const string& timeSlot, const string& name, int age, const string& contactNumber) {
+        if (!isValidTimeSlot(timeSlot)) {
+            cout << "Invalid time slot. Please choose from available time slots." << endl;
+            return;
+        }
+
+        auto it = find(availableTimeSlots.begin(), availableTimeSlots.end(), timeSlot);
+        if (it != availableTimeSlots.end()) {
+            availableTimeSlots.erase(it);
+            cout << "\nCongratulations! Reservation for " << name << " at " << timeSlot << " O'Clock successful." << endl;
+            Reservation reservation(name, timeSlot, age, contactNumber);
+            cout << "Can you confirm the following details?" << endl;
+            reservation.displayDetails();
+        } else {
+            cout << "Failed to reserve. The selected time slot is not available." << endl;
+        }
+    }
+    
+};
+
+int main() {
+    cout << "\t\t\t\t<<==================================================>>\n\t\t\t\t  Welcome to the Royal Restaurant Reservation System\n\t\t\t\t<<==================================================>>" << endl;
+
+    string name, contactNumber, timeSlot;
+    int age;
+
+    cout << "Hello Sir/Madam! How are you doing.\nI Would Like to assist you today...\nWhat is your Good name: ";
+    getline(cin, name);
+
+    cout << "Welcome, " << name << "! How old are you: ";
+    cin >> age;
+
+    cout << "Great! Please provide your contact number: ";
+    cin.ignore();
+    getline(cin, contactNumber);
+
+    Restaurant restaurant;
+
+    while (true) {
+        cout << "\n1. Display Available Time Slots\n2. Make a Reservation\n3. Exit" << endl;
+        cout << "Enter your choice: ";
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                restaurant.displayAvailableTimeSlots();
+                break;
+            case 2:
+                cout << "Enter preferred time slot (HH:MM): ";
+                cin >> timeSlot;
+
+                restaurant.reserveTimeSlot(timeSlot, name, age, contactNumber);
+                break;
+            case 3:
+                cout << "Exiting program. Thank you!" << endl;
+                return 0;
+            default:
+                cout << "Invalid choice. Please enter a valid option." << endl;
+        }
+        cin.ignore();
+    }
+
+    return 0;
+}
